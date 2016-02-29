@@ -21,11 +21,6 @@ def Pythagoras_tree(m = 0.8, n = 12):
     #         M[0,:] = [0 -1 0 1 1];
     #         The leaf located at row i will give 2 leaves located at 2*i and
     #         2*i+1.
-    #
-    # 2010 02 29
-    # 2016 02 28
-    # Guillaume Jacquenot
-    # guillaume dot jacquenot at gmail dot com
 
     # Check inputs
     from math import pi, atan2, sqrt
@@ -34,8 +29,6 @@ def Pythagoras_tree(m = 0.8, n = 12):
         raise Exception('Length of m has to be greater than zero')
     if int(n)!=float(n):
         raise Exception('The number of level has to be integer')
-    # if ~iscolormap(colormap):
-    #     raise Exception('Input colormap is not valid')
 
     ## Compute constants
     d      = sqrt(1+m**2)                                   #
@@ -225,7 +218,7 @@ def iscolormap(cmap):
 
 if __name__ == '__main__':
     import argparse
-    parser = argparse.ArgumentParser(description = 'Process some integers.')
+    parser = argparse.ArgumentParser(description = 'This script creates a SVG image of a Pythagoras tree, a plane fractal constructed from squares.')
     parser.add_argument('m', type = float, default = 1.0,
                        help = 'm ( m > 0 ) is the relative length of one of the side right-angled triangle. '+
                               'The second side of the right-angle is taken to be one. '+
@@ -234,9 +227,9 @@ if __name__ == '__main__':
                        help='n is the level of recursion. The number of elements of tree is equal '+
                             'to 2**(n+1)-1. A reasonable number for n is 10.')
     parser.add_argument('-c','--colormap', type = str, default = 'summer',
-                       help='String used to generate color of the different levels of the tree.')
+                       help='Matplotlib colormap used to generate color of the different levels of the tree.')
     args = parser.parse_args()
-    
+
     M = Pythagoras_tree(m = args.m, n = args.n)
     # Display the tree
     # Pythagor_tree_plot(M,n);
