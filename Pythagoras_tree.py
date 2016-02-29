@@ -170,29 +170,26 @@ def Pythagor_tree_write2svg(m = 0.8, n = 12, colormap = 'summer', M = []):
     fid.write('</svg>\n')
     fid.close()
 
-#def Pythagor_tree_plot(D, colormap = 'summer'):
-#    from matplotlib import cm
-#    ColorM = cm.get_cmap(colormap)
-#    H = figure('color','w');
-#    hold on
-#    axis equal
-#    axis off
-#    def mat_rot(x):
-#       import numpy as np
-#       c = np.cos(x)
-#       s = np.sin(x)
-#       return np.array([[c,-s],[s,c]])
-#    for i in range(M.shape[0]):
-#        cx    = D[i,0]
-#        cy    = D[i,1]
-#        theta = D[i,2]
-#        si    = D[i,3]
-#        M     = mat_rot(theta)
-#        x     = si*np.array([0,1,1,0,0])
-#        y     = si*np.array([0,0,1,1,0])
-#        pts   = np.dot(M,np.array([[x],[y]]))
-#        fill(cx+pts[0,:],cy+pts[1,:],ColorM(D(i,5)+1,:));
-#        # plot(cx+pts(1,1:2),cy+pts(2,1:2),'r');
+def Pythagor_tree_plot(M, colormap = 'summer', outputFilename = 'lm.png'):
+    from math import pi
+    from matplotlib import cm
+    from matplotlib import patches
+    import matplotlib.pyplot as plt
+    ColorM = cm.get_cmap(colormap)
+    fig, ax = plt.subplots()
+    for i in range(M.shape[0]):
+        cx    = M[i,0]
+        cy    = M[i,1]
+        theta = M[i,2]
+        si    = M[i,3]
+        rect = patches.Rectangle([cx,cy], si, si, angle = theta * 180.0/pi, ec="none", color = ColorM(1.0-i/(M[-1,4]+1)))
+        ax.add_patch(rect)
+    plt.xlim([-4, 4])
+    plt.ylim([-1.5, 3.5])
+    # plt.gca().relim()
+    plt.gca().set_aspect('equal', adjustable='box')
+    plt.axis('off')
+    fig.savefig(outputFilename, bbox_inches='tight')
 
 def iscolormap(cmap):
     # This function returns true if 'cmap' is a valid colormap
