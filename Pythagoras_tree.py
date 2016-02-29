@@ -1,5 +1,4 @@
-def Pythagoras_tree(m = 0.8,n = 12, colormap = 'summer'):
-    # Pythagoras_tree(m,n,colormap)
+def Pythagoras_tree(m = 0.8, n = 12):
     # Compute Pythagoras_tree
     # The Pythagoras Tree is a plane fractal constructed from squares.
     # It is named after Pythagoras  because each triple of touching squares
@@ -7,16 +6,6 @@ def Pythagoras_tree(m = 0.8,n = 12, colormap = 'summer'):
     # depict the Pythagorean theorem.
     # http://en.wikipedia.org/wiki/Pythagoras_tree
     #
-    # Input :
-    #       - m ( double m> 0) is the relative length of one of the side
-    #         right-angled triangle. The second side of the right-angle is
-    #         taken to be one.
-    #         To have a symmetric tree, m has to be 1.
-    #       - n ( integer ) is the level of recursion.
-    #         The number of elements of tree is equal to 2**(n+1)-1.
-    #         A reasonable number for n is 10.
-    #       - colormap: String used to generate color of the different levels
-    #         of the tree.
     #       All these arguments are optional: the function can run with
     #       argument.
     # Output :
@@ -32,9 +21,6 @@ def Pythagoras_tree(m = 0.8,n = 12, colormap = 'summer'):
     #         M[0,:] = [0 -1 0 1 1];
     #         The leaf located at row i will give 2 leaves located at 2*i and
     #         2*i+1.
-    #       - A svg file giving a vectorial display of the tree. The name of
-    #         file is generated from the parameter m,n,colormap. The file is
-    #         stored in the current folder.
     #
     # 2010 02 29
     # 2016 02 28
@@ -44,11 +30,9 @@ def Pythagoras_tree(m = 0.8,n = 12, colormap = 'summer'):
     # Check inputs
     from math import pi, atan2, sqrt
     import numpy as np
-    m = 1.0
-    n = 12
     if m <= 0:
         raise Exception('Length of m has to be greater than zero')
-    if int(m)!=float(m):
+    if int(n)!=float(n):
         raise Exception('The number of level has to be integer')
     # if ~iscolormap(colormap):
     #     raise Exception('Input colormap is not valid')
@@ -72,6 +56,11 @@ def Pythagoras_tree(m = 0.8,n = 12, colormap = 'summer'):
         M[Offset : Offset + tmp, 4] = i;
         Offset = Offset + tmp
 
+    def mat_rot(x):
+        import numpy as np
+        c = np.cos(x)
+        s = np.sin(x)
+        return np.array([[c,-s],[s,c]])
     # Compute the position and size of each square wrt its parent
     for i in range(1,nEle,2):
         j          = (i+1)//2-1
@@ -82,13 +71,13 @@ def Pythagoras_tree(m = 0.8,n = 12, colormap = 'summer'):
         theta2     = (M[j,2]+alpha2)%pi2
         M[i  ,0:4] = [Tx[0],Ty[0],theta1,M[j,3]*c1]
         M[i+1,0:4] = [Tx[1],Ty[1],theta2,M[j,3]*c2]
-    # Display the tree
-    # Pythagor_tree_plot(M,n);
+    return M
 
-    # Write results to an SVG file
-    Pythagor_tree_write2svg(m,n,colormap,M);
-
-def Pythagor_tree_write2svg(m = 0.8,n = 12, colormap = 'summer', M = []):
+def Pythagor_tree_write2svg(m = 0.8, n = 12, colormap = 'summer', M = []):
+    # A svg file giving a vectorial display of the tree. The name of
+    # file is generated from the parameter m,n,colormap. The file is
+    # stored in the current folder.
+    #
     # Determine the bounding box of the tree with an offset
     # Display_metadata = false;
     from math import pi, atan2, sqrt, ceil
@@ -110,7 +99,7 @@ def Pythagor_tree_write2svg(m = 0.8,n = 12, colormap = 'summer', M = []):
     co   = 100;
     Wfig = ceil(co*(max_x-min_x))
     Hfig = ceil(co*(max_y-min_y))
-    filename = 'Pythagoras_tree_1_'+str(m).replace('.','_')+'_'+str(n)+'_'+colormap+'.svg'
+    filename = 'Pythagoras_tree_'+str(m).replace('.','_')+'__'+str(n)+'__'+colormap+'.svg'
     fid  = open(filename, 'wt');
     fid.write('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
     if not Display_metadata:
@@ -188,30 +177,28 @@ def Pythagor_tree_write2svg(m = 0.8,n = 12, colormap = 'summer', M = []):
     fid.write('</svg>\n')
     fid.close()
 
-def mat_rot(x):
-    import numpy as np
-    c = np.cos(x)
-    s = np.sin(x)
-    return np.array([[c,-s],[s,c]])
-
-#def Pythagor_tree_plot(D,ColorM)
-#    if numel(ColorM) == 1
-#        ColorM = flipud(summer(ColorM+1));
-#    end
+#def Pythagor_tree_plot(D, colormap = 'summer'):
+#    from matplotlib import cm
+#    ColorM = cm.get_cmap(colormap)
 #    H = figure('color','w');
 #    hold on
 #    axis equal
 #    axis off
-#    for i=1:size(D,1)
-#        cx    = D(i,1);
-#        cy    = D(i,2);
-#        theta = D(i,3);
-#        si    = D(i,4);
-#        M     = mat_rot(theta);
-#        x     = si*[0 1 1 0 0];
-#        y     = si*[0 0 1 1 0];
-#        pts   = M*[x;y];
-#        fill(cx+pts(1,:),cy+pts(2,:),ColorM(D(i,5)+1,:));
+#    def mat_rot(x):
+#       import numpy as np
+#       c = np.cos(x)
+#       s = np.sin(x)
+#       return np.array([[c,-s],[s,c]])
+#    for i in range(M.shape[0]):
+#        cx    = D[i,0]
+#        cy    = D[i,1]
+#        theta = D[i,2]
+#        si    = D[i,3]
+#        M     = mat_rot(theta)
+#        x     = si*np.array([0,1,1,0,0])
+#        y     = si*np.array([0,0,1,1,0])
+#        pts   = np.dot(M,np.array([[x],[y]]))
+#        fill(cx+pts[0,:],cy+pts[1,:],ColorM(D(i,5)+1,:));
 #        # plot(cx+pts(1,1:2),cy+pts(2,1:2),'r');
 
 def iscolormap(cmap):
@@ -237,4 +224,22 @@ def iscolormap(cmap):
     return cmap in LCmap
 
 if __name__ == '__main__':
-    Pythagoras_tree(m = 1.0, n = 12, colormap = 'summer')
+    import argparse
+    parser = argparse.ArgumentParser(description = 'Process some integers.')
+    parser.add_argument('m', type = float, default = 1.0,
+                       help = 'm ( m > 0 ) is the relative length of one of the side right-angled triangle. '+
+                              'The second side of the right-angle is taken to be one. '+
+                              'To have a symmetric tree, m has to be 1.')
+    parser.add_argument('n', type = int, default = 10,
+                       help='n is the level of recursion. The number of elements of tree is equal '+
+                            'to 2**(n+1)-1. A reasonable number for n is 10.')
+    parser.add_argument('-c','--colormap', type = str, default = 'summer',
+                       help='String used to generate color of the different levels of the tree.')
+    args = parser.parse_args()
+    
+    M = Pythagoras_tree(m = args.m, n = args.n)
+    # Display the tree
+    # Pythagor_tree_plot(M,n);
+    # Write results to an SVG file
+    Pythagor_tree_write2svg(args.m, args.n, args.colormap, M)
+
