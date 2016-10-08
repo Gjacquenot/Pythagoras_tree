@@ -1,3 +1,6 @@
+# -*- coding: UTF-8 -*-
+# Works with Python2 and Python3
+
 def Pythagoras_tree(m = 0.8, n = 12):
     # Compute Pythagoras_tree
     # The Pythagoras Tree is a plane fractal constructed from squares.
@@ -22,9 +25,9 @@ def Pythagoras_tree(m = 0.8, n = 12):
     #         The leaf located at row i will give 2 leaves located at 2*i and
     #         2*i+1.
 
-    # Check inputs
     from math import pi, atan2, sqrt
     import numpy as np
+    # Check inputs
     if m <= 0:
         raise Exception('Length of m has to be greater than zero')
     if int(n)!=float(n):
@@ -34,7 +37,7 @@ def Pythagoras_tree(m = 0.8, n = 12):
     d      = sqrt(1+m**2)                                   #
     c1     = 1/d                                            # Normalized length 1
     c2     = m/d                                            # Normalized length 2
-    T      = np.array([[0,1/(1+m**2)],[1,1+m/(1+m**2)]])    # Translation pattern
+    T      = np.array([[0,1/(1+m**2)],[1,1+m/(1+m**2)]])   # Translation pattern
     alpha1 = atan2(m,1)                                     # Defines the first rotation angle
     alpha2 = alpha1-pi/2                                    # Defines the second rotation angle
     pi2    = 2*pi                                           # Defines pi2
@@ -46,11 +49,10 @@ def Pythagoras_tree(m = 0.8, n = 12):
     Offset = 0
     for i in range(n+1):
         tmp = 2**i
-        M[Offset : Offset + tmp, 4] = i;
-        Offset = Offset + tmp
+        M[Offset : Offset + tmp, 4] = i
+        Offset += tmp
 
     def mat_rot(x):
-        import numpy as np
         c = np.cos(x)
         s = np.sin(x)
         return np.array([[c,-s],[s,c]])
@@ -164,7 +166,7 @@ def Pythagor_tree_write2svg(m = 0.8, n = 12, colormap = 'summer', M = []):
         Offset = 2**i-1
         for j in range(2**i):
             k = j + Offset
-            fid.write('\t\t\t<use xlink:href="#squa" transform="translate({0:+010.5f} {1:+010.5f}) rotate({2:+010.5f}) scale({3:8.6f})" />\n'.format(co*M[k,0],co*M[k,1],M[k,2]*180/pi,M[k,3]))
+            fid.write('\t\t\t<use xlink:href="#squa" transform="translate({0:+010.5f} {1:+010.5f}) rotate({2:3.1f}) scale({3:8.6f})" />\n'.format(co*M[k,0],co*M[k,1],M[k,2]*180/pi,M[k,3]))
         fid.write('\t\t</g>\n')
     fid.write('\t</g>\n')
     fid.write('</svg>\n')
@@ -191,8 +193,7 @@ def Pythagor_tree_plot(M, colormap = 'summer', outputFilename = 'lm.png'):
     plt.axis('off')
     fig.savefig(outputFilename, bbox_inches='tight')
 
-def iscolormap(cmap):
-    # This function returns true if 'cmap' is a valid colormap
+def getListOfColormaps():
     LCmap = [\
         'autumn',
         'bone',
@@ -211,25 +212,41 @@ def iscolormap(cmap):
         'summer',
         'white',
         'winter']
-    return cmap in LCmap
+    return LCmap
+
+def isColormap(cmap):
+    # This function returns true if 'cmap' is a valid colormap
+    return cmap in getListOfColormaps()
 
 if __name__ == '__main__':
     import argparse
-    parser = argparse.ArgumentParser(description = 'This script creates a SVG image of a Pythagoras tree, a plane fractal constructed from squares.')
-    parser.add_argument('m', type = float, default = 1.0,
-                       help = 'm ( m > 0 ) is the relative length of one of the side right-angled triangle. '+
+    parser = argparse.ArgumentParser(
+        description = 'This script creates a SVG image of a Pythagoras tree, a plane fractal constructed from squares.')
+    parser.add_argument('-r','--ratio', type = float, default = 1.0,
+                       help = 'r ( r > 0 ) is the relative length of one of the side right-angled triangle. '+
                               'The second side of the right-angle is taken to be one. '+
-                              'To have a symmetric tree, m has to be 1.')
-    parser.add_argument('n', type = int, default = 10,
+                              'To have a symmetric tree, r has to be 1.')
+    parser.add_argument('-l','--level', type = int, default = 10,
                        help='n is the level of recursion. The number of elements of tree is equal '+
                             'to 2**(n+1)-1. A reasonable number for n is 10.')
+    parser.add_argument('-p','--plot', action = 'store_true',
+                       help='Option used to display the tree as a PNG image with matplotlib')
     parser.add_argument('-c','--colormap', type = str, default = 'summer',
-                       help='Matplotlib colormap used to generate color of the different levels of the tree.')
+                       help='Matplotlib colormap used to generate color of the different levels of the tree. '+
+                       'Possible values are {0}'.format(' '.join(getListOfColormaps())))
     args = parser.parse_args()
 
-    M = Pythagoras_tree(m = args.m, n = args.n)
-    # Display the tree
-    # Pythagor_tree_plot(M,n);
+    # Create a matrix containing the informations representing the tree
+    # Each row represents a single square
+    M = Pythagoras_tree(m = args.ratio, n = args.level)
+
+    if args.plot:
+        # Display the tree
+        filename = 'Pythagoras_tree_'+\
+            str(args.ratio).replace('.','_')+'__'+\
+            str(args.level)+'__'+args.colormap+'.png'
+        Pythagor_tree_plot(M, colormap = args.colormap, outputFilename = filename)
+
     # Write results to an SVG file
-    Pythagor_tree_write2svg(args.m, args.n, args.colormap, M)
+    Pythagor_tree_write2svg(args.ratio, args.level, args.colormap, M)
 
