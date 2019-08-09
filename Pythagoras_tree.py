@@ -3,7 +3,7 @@
 #
 # Requires numpy and matplotlib to create pngs.
 #
-# Get started with : python pythagoras.py --help
+# Get started with : python Pythagoras_tree.py --help
 
 def Pythagoras_tree(m=0.8, n=12):
     """
