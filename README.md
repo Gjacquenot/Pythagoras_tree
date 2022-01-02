@@ -1,10 +1,11 @@
 Pythagoras Tree
 ===============
 
-These scripts create a SVG image of a [Pythagoras tree](https://en.wikipedia.org/wiki/Pythagoras_tree_%28fractal%29),
+This repository contains scripts to create SVG and PNG images of
+a [Pythagoras tree](https://en.wikipedia.org/wiki/Pythagoras_tree_%28fractal%29),
 a plane fractal constructed from squares.
 
-A Python and a MatLab scripts are available to generate these SVG images.
+A Python and a MatLab scripts are available to generate these SVG and PNG images.
 
 Below are some examples of command lines for the Python script
 
